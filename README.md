@@ -1,2 +1,4 @@
 # performance.issues
 Performance Issues | Act ||
+
+"Secondary Warrior," part of the "Performance Issues" project, is an AI-generated video-dance work. This piece involves a human body initially performing choreographic scores, which are then transformed by AI into skeletal lines. These lines serve as a basis for a series of aesthetic exercises depicted in the video, offering a score for various performers to interpret them differently. This act symbolizes post-traumatic life experiences shaped by living under the threat of rocket attacks, translating these experiences into the raw materials of the "Secondary Warrior" series. The project, as a whole, reflects a journey through the evolution of violence, with the body activating sonorous mechanisms like feedbacks, duplications, and echoes, embodying Avishag's multidisciplinary approach that encompasses sound installations and diverse mechanisms.
