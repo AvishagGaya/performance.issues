@@ -1,0 +1,73 @@
+import cv2
+import numpy as np
+import tkinter as tk
+from threading import Thread
+
+# Global variables for parameters
+blur_size = 5
+threshold_value = 100
+
+def detect_triangles(frame, blur_size, threshold_value):
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    # Ensure blur_size is odd and greater than 0
+    blur_size = max(1, blur_size // 2 * 2 + 1)
+    blurred = cv2.GaussianBlur(gray, (blur_size, blur_size), 0)
+    thresh = cv2.threshold(blurred, threshold_value, 255, cv2.THRESH_BINARY)[1]
+
+    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    for cnt in contours:
+        approx = cv2.approxPolyDP(cnt, 0.1 * cv2.arcLength(cnt, True), True)
+        if len(approx) == 3:
+            cv2.drawContours(frame, [approx], 0, (0, 255, 0), 4)
+            cv2.putText(frame, 'Triangle', (approx.ravel()[2], approx.ravel()[1]), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
+
+    return frame
+
+def update_parameters():
+    global blur_size, threshold_value
+    blur_size = int(blur_scale.get())
+    threshold_value = int(threshold_scale.get())
+
+def video_thread():
+    cap = cv2.VideoCapture(r"C:\Users\Administrator\Downloads\C0030.mkv")
+
+    # Create a named window and make it resizable
+    cv2.namedWindow('Triangles Detection', cv2.WINDOW_NORMAL)
+    cv2.resizeWindow('Triangles Detection', 640, 480)
+
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        frame_with_triangles = detect_triangles(frame, blur_size, threshold_value)
+        cv2.imshow('Triangles Detection', frame_with_triangles)
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    cap.release()
+    cv2.destroyAllWindows()
+
+# GUI
+root = tk.Tk()
+root.title("Triangle Detector Settings")
+
+blur_scale = tk.Scale(root, from_=1, to_=50, label="Blur Size", orient="horizontal")
+blur_scale.set(blur_size)
+blur_scale.pack()
+
+threshold_scale = tk.Scale(root, from_=0, to_=255, label="Threshold Value", orient="horizontal")
+threshold_scale.set(threshold_value)
+threshold_scale.pack()
+
+update_button = tk.Button(root, text="Update Parameters", command=update_parameters)
+update_button.pack()
+
+# Start video thread in a separate thread
+thread = Thread(target=video_thread)
+thread.daemon = True
+thread.start()
+
+root.mainloop()
